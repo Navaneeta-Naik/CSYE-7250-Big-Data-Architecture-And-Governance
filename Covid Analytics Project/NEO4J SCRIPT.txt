@@ -1,0 +1,86 @@
+NEO4J SCRIPT
+
+CREATE CONSTRAINT ON (country:Country) ASSERT country.CountryId IS UNIQUE;
+CREATE CONSTRAINT ON (province:Province) ASSERT province.ProvinceId IS UNIQUE;
+CREATE CONSTRAINT ON (date:Date) ASSERT date.ObservationDate IS UNIQUE;
+CREATE CONSTRAINT ON (infectionStatus:InfectionStatus) ASSERT infectionStatus.EnteryId IS UNIQUE;
+
+// Create Country Node
+:auto USING PERIODIC COMMIT 500
+LOAD CSV With HEADERS FROM 'file:///COVID19.csv' AS row
+MERGE
+	(country:Country {CountryId:row.CountryID})
+	ON CREATE
+	SET country.CountryName = row.Country;
+
+// Create Province Node
+:auto USING PERIODIC COMMIT 500
+LOAD CSV With HEADERS FROM 'file:///COVID19.csv' AS row
+MERGE
+	(province:Province {ProvinceId:row.ProvinceID})
+	ON CREATE
+	SET province.ProvinceName = row.Province;
+
+// Create Date Node
+:auto USING PERIODIC COMMIT 500
+LOAD CSV With HEADERS FROM 'file:///COVID19.csv' AS row
+MERGE
+	(date:Date {ObservationDate:row.ObservationDate})
+	ON CREATE
+	SET date.ObservationYear = row.ObservationYear
+	SET date.ObservationMonth = row.ObservationMonth;
+
+// Create InfectionStatus Node
+:auto USING PERIODIC COMMIT 500
+LOAD CSV With HEADERS FROM 'file:///COVID19.csv' AS row
+MERGE
+	(infectionStatus:InfectionStatus {EnteryId:row.SNo})
+	ON CREATE
+	SET infectionStatus.Confirmed = row.Confirmed
+	SET infectionStatus.Deaths = row.Deaths
+	SET infectionStatus.Recovered = row.Recovered
+	SET infectionStatus.UpdateTime = row.LastUpdate
+	SET infectionStatus.UpdateTimeYear = row.LastUpdateYear
+	SET infectionStatus.UpdateTimeMonth = row.LastUpdateMonth;
+
+// The RelationShip between Country and Province
+:auto USING PERIODIC COMMIT 500
+LOAD CSV With HEADERS FROM 'file:///COVID19.csv' AS row
+	MATCH (country:Country {CountryId:row.CountryID})
+	MATCH (province:Province {ProvinceId:row.ProvinceID})
+	MERGE (country)-[:HAS]->(province);
+
+// The RelationShip between Country and Date
+:auto USING PERIODIC COMMIT 500
+LOAD CSV With HEADERS FROM 'file:///COVID19.csv' AS row
+	MATCH (country:Country {CountryId:row.CountryID})
+	MATCH (date:Date {ObservationDate:row.ObservationDate})
+	MERGE (country)-[:BE_OBSERVED]->(date);
+
+// The RelationShip between Province and Date
+:auto USING PERIODIC COMMIT 500
+LOAD CSV With HEADERS FROM 'file:///COVID19.csv' AS row
+	MATCH (province:Province {ProvinceId:row.ProvinceID})
+	MATCH (date:Date {ObservationDate:row.ObservationDate})
+	MERGE (province)-[:BE_OBSERVED]->(date);
+
+// The RelationShip between Country and InfectionStatus
+:auto USING PERIODIC COMMIT 500
+LOAD CSV With HEADERS FROM 'file:///COVID19.csv' AS row
+	MATCH (country:Country {CountryId:row.CountryID})
+	MATCH (infectionStatus:InfectionStatus {EnteryId:row.SNo})
+	MERGE (province)-[:DEFINED]->(infectionStatus);
+
+// The RelationShip between Province and InfectionStatus
+:auto USING PERIODIC COMMIT 500
+LOAD CSV With HEADERS FROM 'file:///COVID19.csv' AS row
+	MATCH (province:Province {ProvinceId:row.ProvinceID})
+	MATCH (infectionStatus:InfectionStatus {EnteryId:row.SNo})
+	MERGE (province)-[:DEFINED]->(infectionStatus);
+
+// The RelationShip between Date and InfectionStatus
+:auto USING PERIODIC COMMIT 500
+LOAD CSV With HEADERS FROM 'file:///COVID19.csv' AS row
+	MATCH (date:Date {ObservationDate:row.ObservationDate})
+	MATCH (infectionStatus:InfectionStatus {EnteryId:row.SNo})
+	MERGE (date)-[:DEFINED]->(infectionStatus);
