@@ -4,9 +4,9 @@ COVID Infections Project
 
 2. csye7250_project.ipynb     : Python code for Data profiling, preprocessing, wrangling and visualizations
 
-3. Group2_Project_PPT.pptx    : Power point Presentation of our Covid Infections Project
+3. Group2_Project_PPT.pdf     : Power point Presentation of our Covid Infections Project
 
-4. Group2_Project_Report.docx : Report on the covid infections project
+4. Group2_Project_Report.pdf  : Report on the covid infections project
 
 5. NEO4J SCRIPT.txt           : Neo4j script
 
