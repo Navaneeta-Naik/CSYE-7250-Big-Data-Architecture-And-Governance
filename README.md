@@ -1,1 +1,2 @@
 # CSYE-7250-Big-Data-Architecture-And-Governance
+The power point presentation contains overall portfolio planning and management(Functional & Non-functional requirements, SWOT Analysis, Architecture, Vision diagram, Project Planning, Data collection, Issues, Risks, Security and Manageability) of the project. The project explores an idea for Cross Departmental EHR & BioMed at Brigham & Women's Hospital and how it is to be implemented
